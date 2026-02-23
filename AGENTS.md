@@ -117,6 +117,14 @@ Reactions are lightweight social signals. Humans use them constantly — they sa
 
 Skills provide your tools. When you need one, check its `SKILL.md`. Keep local notes (camera names, SSH details, voice preferences) in `TOOLS.md`.
 
+### Web search failover rule (important)
+If web research is needed:
+1) Try `functions.web_search` (Brave).
+2) If it errors, is unconfigured, rate-limited, or returns no usable results, **immediately fall back to SearXNG** using the `searxng-web-search` skill (script: `...\\skills\\searxng-web-search\\scripts\\searxng_search.py`).
+3) Then use `web_fetch` on the best URLs.
+
+This is the default behavior for **any model/session** running in this workspace.
+
 **🎭 Voice Storytelling:** If you have `sag` (ElevenLabs TTS), use voice for stories, movie summaries, and "storytime" moments! Way more engaging than walls of text. Surprise people with funny voices.
 
 **📝 Platform Formatting:**
@@ -206,6 +214,62 @@ Periodically (every few days), use a heartbeat to:
 Think of it like a human reviewing their journal and updating their mental model. Daily files are raw notes; MEMORY.md is curated wisdom.
 
 The goal: Be helpful without being annoying. Check in a few times a day, do useful background work, but respect quiet time.
+
+## Model Usage Policy
+
+**Save expensive models for complex work. Use local/free models for everything routine.**
+**Be an orchestrator, not a worker. Spawn sub-agents for tasks and save your own usage for coordination.**
+
+### Tiers
+- **Local (free — use for EVERYTHING possible):**
+  - `lmstudio/qwen/qwen3-30b-a3b` — general-purpose workhorse, best all-rounder
+  - `lmstudio/qwen/qwen3-coder-30b` — coding tasks (writing code, debugging, refactoring)
+  - `lmstudio/zai-org/glm-4.7-flash` — good for coding/tool calling
+  - `lmstudio/google/gemma-3-27b` — good for writing/content
+  - `lmstudio/openai/gpt-oss-20b` — lighter alternative
+  - `lmstudio/nvidia/nemotron-3-nano` — fastest/lightest (16k context, simple tasks only)
+  - `lmstudio/qwen/qwen3-vl-30b` — vision tasks (if image input is supported)
+
+- **Paid (for orchestration + truly complex reasoning only):** `openai-codex/gpt-5.2`, `google-antigravity/claude-opus-4-6-thinking`
+  - Direct user conversations (you, the main agent)
+  - Architecture decisions, nuanced judgment calls
+  - When local models fail or produce poor results
+
+### Delegation Rules (MANDATORY)
+
+**Default behavior: Spawn a sub-agent for any task that doesn't require direct user interaction.**
+
+1. **SEO audits, WordPress checks, web research** → spawn with `lmstudio/qwen/qwen3-30b-a3b`
+2. **Code writing, debugging, refactoring** → spawn with `lmstudio/qwen/qwen3-coder-30b`
+3. **Content writing, copy, summaries** → spawn with `lmstudio/google/gemma-3-27b` or `lmstudio/qwen/qwen3-30b-a3b`
+4. **Simple status checks, file operations** → spawn with `lmstudio/qwen/qwen3-30b-a3b`
+5. **Heartbeats** → configured in openclaw.json (qwen3-30b)
+6. **Cron jobs** → always pass `--model "lmstudio/qwen/qwen3-30b-a3b"` unless task needs more
+
+### How to Equip Sub-Agents
+
+When spawning a sub-agent, include in the task prompt:
+- **The relevant skill content** (read the SKILL.md and paste key sections into the task)
+- **Tool instructions** (which tools to use and how — exec, web_fetch, read, write, etc.)
+- **File paths** for skills, references, and workspace files they'll need
+- **Clear deliverables** (what to produce and where to save it)
+- **Context** they need (URLs, project details, constraints)
+
+Example pattern:
+```
+sessions_spawn(
+  task: "...[include skill instructions + tool guidance + deliverables]...",
+  model: "lmstudio/qwen/qwen3-30b-a3b",
+  mode: "run",
+  cleanup: "keep"
+)
+```
+
+### When NOT to delegate
+- Direct conversation with the user (you handle this)
+- Tasks requiring judgment about user preferences or sensitive decisions
+- When the user explicitly asks YOU to do something
+- Quick one-liner edits (just do it, don't spawn overhead)
 
 ## Make It Yours
 
