@@ -11,6 +11,8 @@ _Learn about the person you're helping. Update this as you go._
   - Orchestration preference: spawn sub-agents when useful; give them the right tools/skills/instructions; keep them tightly on-task until completion; if things drift, implement a process to recover and improve efficiency.
   - Product focus: B2B or B2C is fine — “either, as long as it pays.”
   - No-go zones: avoid ideas needing major applications/approvals (government/legal bodies) or expensive compliance gateways.
+  - Routine: each night I should ask if you want to run the Reddit scan; you’ll reply yes/no.
+  - Scan freshness: use a timeline filter (default last year; adjust tighter/looser as needed).
   - Coolify: You have a dedicated Coolify Project named **OpenClaw** you can use freely (create resources, deploy, test) without asking. Do **not** touch other Coolify projects/spaces/resources unless explicitly asked.
 
 ## Context
