@@ -1,0 +1,27 @@
+services:
+  backend:
+    build: ./backend
+    container_name: leadgen-backend
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/').read()"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  frontend:
+    image: nginx:alpine
+    container_name: leadgen-frontend
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+

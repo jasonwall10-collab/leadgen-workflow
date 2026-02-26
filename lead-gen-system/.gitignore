@@ -1,0 +1,10 @@
+.env
+data/*.db
+data/*.db-journal
+backend/uploads/
+__pycache__/
+backend/__pycache__/
+backend/.pytest_cache/
+*.pyc
+node_modules/
+frontend/node_modules/

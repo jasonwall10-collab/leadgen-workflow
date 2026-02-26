@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Website Audit Result",
+  "type": "object",
+  "properties": {
+    "scores": {
+      "type": "object",
+      "properties": {
+        "design": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "seo": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "conversion": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "trust": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "mobile": { "type": "integer", "minimum": 0, "maximum": 100 }
+      },
+      "required": ["design", "seo", "conversion", "trust", "mobile"]
+    },
+    "finding_summary": { "type": "string" },
+    "quick_wins": { "type": "array", "items": { "type": "string" } },
+    "weaknesses": { "type": "array", "items": { "type": "string" } }
+  },
+  "required": ["scores", "finding_summary", "quick_wins", "weaknesses"]
+}
